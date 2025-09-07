@@ -17,8 +17,8 @@ Enumeration
   #amiga_font
 EndEnumeration
 
-#fenster_breite = 300
-#fenster_hoehe = 300
+#fenster_breite = 400
+#fenster_hoehe = 200
 #text_hoehe = 12
 fenstertitel.s = "Workbench:Tools"
 #aktiv = 1
