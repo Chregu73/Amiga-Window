@@ -7,14 +7,14 @@ Amiga-Fenster für Windows und PureBasic
 ## Benutzung
 
 - [.zip](https://github.com/Chregu73/Amiga-Window/archive/refs/heads/main.zip) herunterladen
-- .zip entpacken
+- `.zip` entpacken
 - [Amiga-Window.exe](Amiga-Window.exe) starten
 
 Optional:
 
-- AMIGA.FON (Font) [installieren](#anleitung-zur-installation-eines-fon-fonts)
-- Mauszeiger (.cur) [installieren](#anleitung-zur-installation-einer-cur-datei)
-- Amiga-Window.pb in PureBasic laden und experimentieren
+- `AMIGA.FON` (Font) [installieren](#anleitung-zur-installation-eines-fon-fonts)
+- Mauszeiger (`.cur`) [installieren](#anleitung-zur-installation-einer-cur-datei)
+- `Amiga-Window.pb` in PureBasic laden und experimentieren
 
 ## Was schon funktioniert
 
