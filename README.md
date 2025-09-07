@@ -65,8 +65,6 @@ Zuerst musst du die `.cur`-Datei in das offizielle Windows-Cursor-Verzeichnis ve
 * Gib `%windir%\cursors` ein und drücke `Enter`.
 * Kopiere deine `.cur`-Datei in diesen Ordner. Möglicherweise benötigst du Administratorrechte, um die Datei einzufügen.
 
----
-
 ### 2. Cursor in den Mauseinstellungen aktivieren
 
 Nachdem die Datei im richtigen Ordner ist, kannst du sie in den Windows-Mauseinstellungen auswählen.
