@@ -6,9 +6,9 @@ Amiga-Fenster für Windows und PureBasic
 
 ## Benutzung
 
-- .zip herunterladen
+- [.zip](https://github.com/Chregu73/Amiga-Window/archive/refs/heads/main.zip) herunterladen
 - .zip entpacken
-- Amiga-Window.exe starten
+- [Amiga-Window.exe](Amiga-Window.exe) starten
 
 Optional:
 
