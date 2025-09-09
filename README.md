@@ -23,11 +23,13 @@ Optional:
 - mit der Titelleiste ziehbar
 - Minimieren
 - Farbe ändert wenn aktiv/inaktiv
+- ein paar Gadgets
 
 ## Was noch nicht funktioniert
 
 - Grösse ändern
 - Gadgets hinzufügen
+- Fenster ziehen im CallBack
 
 ---
 
