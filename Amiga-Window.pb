@@ -234,4 +234,5 @@ EndIf
 ; Folding = --
 ; EnableXP
 ; UseIcon = icons8-commodore-amiga-48.ico
+
 ; Executable = Amiga-Window.exe
