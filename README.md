@@ -1,6 +1,6 @@
 # Amiga-Window
 
-Amiga-Fenster für Windows und PureBasic
+Amiga-Fenster für Windows und PureBasic im Stil von AmigaOS 2.x
 
 ![](Amiga-Window.png)
 
