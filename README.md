@@ -20,16 +20,15 @@ Optional:
 
 - Grösse im Quellcode einstellbar
 - Fenster über Klick schliessbar
-- mit der Titelleiste ziehbar
+- mit der Titelleiste ziehbar über CallBack
 - Minimieren
 - Farbe ändert wenn aktiv/inaktiv
 - ein paar Gadgets
+- Hinzufügen von Gadgets
 
 ## Was noch nicht funktioniert
 
 - Grösse ändern
-- Gadgets hinzufügen
-- Fenster ziehen im CallBack
 
 ---
 
