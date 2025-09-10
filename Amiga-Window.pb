@@ -1,4 +1,4 @@
-﻿;Konstanten Amiga Workbench Farben
+;Konstanten Amiga Workbench Farben
 #amiga_farbe_ws = $ffffff
 #amiga_farbe_sw = $000000
 #amiga_farbe_gr = $a9a9a9
@@ -20,11 +20,20 @@ EndEnumeration
 #fenster_breite = 400
 #fenster_hoehe = 200
 #text_hoehe = 12
-fenstertitel.s = "Workbench:Tools"
+fenstertitel.s = "Workbench:Test"
 #aktiv = 1
 #inaktiv = 0
 amiga_fenster_aktiv.b = #aktiv
 beenden.b = #False
+
+Enumeration
+  #amigaWindow
+  #amigaStringGadget
+  #amigaTextGadget
+  #amigaButtonGadget
+  #amigaCheckBoxGadget
+EndEnumeration
+
 CompilerIf 1 ;1=Fixedsys, 0=Amiga
   #font = "Fixedsys"
 CompilerElse
@@ -51,7 +60,7 @@ Procedure DrawWindow(fenstertitel.s, aktiv.b)
   Else
     amiga_farbe.i = #amiga_farbe_gr
   EndIf
-  StartDrawing(WindowOutput(#Window_0))
+  StartDrawing(WindowOutput(#amigaWindow))
   DrawingFont(FontID(#amiga_font))
   DrawingMode(#PB_2DDrawing_Default)
   ;Box(0, 0, #fenster_breite, #fenster_hoehe , #amiga_farbe_gr) ;Hintergrund, ganzes Fenster
@@ -110,7 +119,7 @@ Procedure amigaStringGadget(nummer.i, x.i, y.i, b.i, h.i, text.s, flags.i=0)
   ;Die übergebenenen Koordinaten entsprechen genau den Ausgelesenen:
   ;Debug Str(x.i) + " " + Str(GadgetX(nummer.i))
   ;Debug Str(b.i) + " " + Str(GadgetWidth(nummer.i))
-  StartDrawing(WindowOutput(#Window_0))
+  StartDrawing(WindowOutput(#amigaWindow))
   ; +--------------------2--------------------+
   ; | +------------------1------------------+ |
   ; | |                                     | |
@@ -139,7 +148,7 @@ Procedure amigaTextGadget(nummer.i, x.i, y.i, b.i, h.i, text.s, flags.i=0)
 EndProcedure
 
 Procedure amigaButtonGadget(nummer.i, x.i, y.i, b.i, h.i, text.s, flags.i=0)
-  StartDrawing(WindowOutput(#Window_0))
+  StartDrawing(WindowOutput(#amigaWindow))
   DrawingFont(FontID(#amiga_font))
   DrawText(x.i+(b.i-TextWidth(text.s))/2, y.i+(h.i-TextHeight(text.s))/2, text.s , #amiga_farbe_sw, #amiga_farbe_gr)
   LineXY(x.i-1, y.i-1, x.i+b.i+0, y.i-1, #amiga_farbe_ws) ;Linie 1
@@ -155,7 +164,7 @@ Procedure amigaButtonGadget(nummer.i, x.i, y.i, b.i, h.i, text.s, flags.i=0)
 EndProcedure
 
 Procedure amigaCheckBoxGadget(nummer.i, x.i, y.i, b.i, h.i, text.s, flags.i=#PB_Checkbox_Unchecked) ;#PB_CheckBox_Checked = Häkchen gesetzt
-  StartDrawing(WindowOutput(#Window_0))
+  StartDrawing(WindowOutput(#amigaWindow))
   DrawingFont(FontID(#amiga_font))
   b.i = 20 : h.i = 16
   DrawText(x.i+28, y.i+(h.i-TextHeight(text.s))/2, text.s , #amiga_farbe_sw, #amiga_farbe_gr)
@@ -174,65 +183,127 @@ Procedure amigaCheckBoxGadget(nummer.i, x.i, y.i, b.i, h.i, text.s, flags.i=#PB_
     LineXY(x.i+13, y.i+4, x.i+9, y.i+12, #amiga_farbe_sw)
     LineXY(x.i+14, y.i+4, x.i+10, y.i+12, #amiga_farbe_sw)
     LineXY(x.i+14, y.i+4, x.i+15, y.i+4, #amiga_farbe_sw)
+  Else
+    Box(x.i-1, y.i-1, x.i+b.i+0, y.i-1, #amiga_farbe_gr)
   EndIf
   StopDrawing()
 EndProcedure
 
-If OpenWindow(#Window_0, 0, 0, #fenster_breite, #fenster_hoehe, fenstertitel.s, #PB_Window_BorderLess | #PB_Window_ScreenCentered)
-  SetWindowColor(#Window_0, #amiga_farbe_gr)
-  If LoadFont(#amiga_font, #font, #text_hoehe)
-    font_geladen.b = #True
+; WindowCallback Prozedur zur Verarbeitung von Nachrichten
+Procedure.i WindowCallback(hWnd, Msg, wParam, lParam)
+  If hWnd = WindowID(0)
+    Select Msg
+      Case #WM_NCHITTEST
+        ; Hole die absolute X- und Y-Koordinate vom Bildschirm
+        ; X ist im niederwertigen Wort, Y im höherwertigen
+        Screen_X = lParam & $FFFF
+        Screen_Y = lParam >> 16
+        ; Holen Sie die absolute Position des Fensters
+        Window_X = WindowX(0)
+        Window_Y = WindowY(0)
+        ; Berechne die Maus-Y-Koordinate relativ zum Fenster
+        Mouse_X = Screen_X - Window_X
+        Mouse_Y = Screen_Y - Window_Y
+        ; Wenn die Maus sich in der Titelleiste befindet...
+        If IsInRectangle(Mouse_X, Mouse_Y, 20, 2, #fenster_breite-63, #text_hoehe+3)
+          ; ...sende die Anweisung an Windows, das Fenster zu verschieben
+          ProcedureReturn #HTCAPTION
+        EndIf
+    EndSelect
   EndIf
-  DrawWindow(fenstertitel.s, #aktiv)
+  ProcedureReturn #PB_ProcessPureBasicEvents
+EndProcedure
+
+
+Procedure amigaWindow(window.i, x.i, y.i, b.i, h.i, fenstertitel.s, flags.i=0)
+  If OpenWindow(window.i, x.i, y.i, b.i, h.i, fenstertitel.s, #PB_Window_BorderLess)
+    ;Funktioniert noch nicht:
+  ;If OpenWindow(window.i, x.i, y.i, b.i, h.i, fenstertitel.s, flags.i & ~#PB_Window_BorderLess)
+    SetWindowCallback(@WindowCallback())
+    SetWindowColor(#Window_0, #amiga_farbe_gr)
+    If LoadFont(#amiga_font, #font, #text_hoehe)
+      font_geladen.b = #True
+    EndIf
+    DrawWindow(fenstertitel.s, #aktiv)
+    ProcedureReturn #True
+  Else
+    ProcedureReturn #False
+  EndIf
+EndProcedure
+
+Procedure DrawGadgets()
   amigaStringGadget(1, 50, 50, 50, 20, "Test")
   amigaTextGadget(2, 10, 50, 30, 20, "Test:")
   amigaButtonGadget(3, 50, 100, 100, 40, "Button")
   amigaCheckBoxGadget(4, 200, 100, 100, 20, "CheckBox", #PB_Checkbox_Checked)
+EndProcedure
+
+
+
+OpenPreferences("Preferences.prefs")
+PreferenceGroup("Window")
+If amigaWindow(#amigaWindow,
+               ReadPreferenceInteger("Position_X", 50),
+               ReadPreferenceInteger("Position_X", 50),
+               #fenster_breite,
+               #fenster_hoehe,
+               fenstertitel.s)
+  ClosePreferences()
   Repeat
-    EventID = WindowEvent()
+    EventID = WaitWindowEvent()
+    
     Select EventID
-      Case #PB_Event_None
-        Message.MSG
-        While PeekMessage_(@Message, WindowID(#Window_0), 0, 0, #PM_REMOVE)
-          If Message\message = #WM_LBUTTONDOWN
-            Mouse_X = WindowMouseX(#Window_0) ;Hole die aktuellen Mauskoordinaten relativ zum Fenster
-            Mouse_Y = WindowMouseY(#Window_0)
-            If IsInRectangle(Mouse_X, Mouse_Y, 20, 2, #fenster_breite-63, #text_hoehe+3) ;Titelleiste
-              SendMessage_(WindowID(#Window_0), #WM_SYSCOMMAND, #SC_SIZE_MOVE, 0)
-            ElseIf IsInRectangle(Mouse_X, Mouse_Y, #fenster_breite-42, 2, 19, #text_hoehe+3) ;Minimieren
-              SetWindowState(#Window_0, #PB_Window_Minimize)
-            ElseIf IsInRectangle(Mouse_X, Mouse_Y, #fenster_breite-22, 2, 19, #text_hoehe+3) ;nach Vorne
-              SetWindowState(#Window_0, #PB_Window_Normal)
-              SetActiveWindow(#Window_0)
-            ElseIf IsInRectangle(Mouse_X, Mouse_Y, 2, 2, 16, #text_hoehe+3) ;Beenden
-              beenden.b = #True
-            EndIf
-          EndIf
-          TranslateMessage_(@Message)
-          DispatchMessage_(@Message)
-        Wend
+      Case #PB_Event_CloseWindow
+        beenden.b = #True
+        
+      Case #PB_Event_LeftClick ; Ein Mausklick wurde registriert
+                               ; Holen Sie die Mauskoordinaten relativ zum Fenster
+        Mouse_X = WindowMouseX(#Window_0) ;Hole die aktuellen Mauskoordinaten relativ zum Fenster
+        Mouse_Y = WindowMouseY(#Window_0)
+        If IsInRectangle(Mouse_X, Mouse_Y, 20, 2, #fenster_breite-63, #text_hoehe+3) ;Titelleiste
+          SendMessage_(WindowID(#Window_0), #WM_SYSCOMMAND, #SC_SIZE_MOVE, 0)
+        ElseIf IsInRectangle(Mouse_X, Mouse_Y, #fenster_breite-42, 2, 19, #text_hoehe+3) ;Minimieren
+          SetWindowState(#Window_0, #PB_Window_Minimize)
+        ElseIf IsInRectangle(Mouse_X, Mouse_Y, #fenster_breite-22, 2, 19, #text_hoehe+3) ;nach Vorne
+          SetWindowState(#Window_0, #PB_Window_Normal)
+          SetActiveWindow(#Window_0)
+        ElseIf IsInRectangle(Mouse_X, Mouse_Y, 2, 2, 16, #text_hoehe+3) ;Beenden
+          beenden.b = #True
+        EndIf
+        
       Case #PB_Event_ActivateWindow
         DrawWindow(fenstertitel.s, #aktiv)
-        amigaStringGadget(1, 50, 50, 50, 20, "Test")
-        amigaTextGadget(2, 10, 50, 30, 20, "A:")
+        DrawGadgets()
       Case #PB_Event_DeactivateWindow
         DrawWindow(fenstertitel.s, #inaktiv)
-        amigaStringGadget(1, 50, 50, 50, 20, "Test")
-        amigaTextGadget(2, 10, 50, 30, 20, "A:")
+        DrawGadgets()
       Case #PB_Event_Repaint
         DrawWindow(fenstertitel.s, #aktiv)
-        amigaStringGadget(1, 50, 50, 50, 20, "Test")
-        amigaTextGadget(2, 10, 50, 30, 20, "A:")
+        DrawGadgets()
+        
     EndSelect
-    ;Delay(1)
-  Until (EventID = #PB_Event_CloseWindow) Or beenden.b
-  
+    
+  Until (EventID = #PB_Event_CloseWindow) Or beenden.b  
+  If OpenPreferences("Preferences.prefs")
+    PreferenceGroup("Window")
+    WritePreferenceInteger("Position_X", WindowX(0))
+    WritePreferenceInteger("Position_Y", WindowY(0))
+  Else
+    CreatePreferences("Preferences.prefs")
+    PreferenceGroup("Window")
+    WritePreferenceInteger("Position_X", WindowX(0))
+    WritePreferenceInteger("Position_Y", WindowY(0))
+  EndIf
+Else
+  ClosePreferences()
 EndIf
+
+
+
 ; IDE Options = PureBasic 6.21 (Windows - x86)
-; CursorPosition = 187
-; FirstLine = 155
+; CursorPosition = 255
+; FirstLine = 226
 ; Folding = --
 ; EnableXP
-; UseIcon = icons8-commodore-amiga-48.ico
-
+; UseIcon = boing32.ico
 ; Executable = Amiga-Window.exe
