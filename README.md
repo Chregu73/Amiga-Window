@@ -1,6 +1,6 @@
 # Amiga-Window
 
-Amiga-Fenster für Windows und PureBasic im Stil von AmigaOS 2.x
+Amiga-Fenster für Windows und PureBasic im Stil von [AmigaOS 2.x](https://betawiki.net/wiki/Amiga_Workbench_2.0)
 
 ![](Amiga-Window.png)
 
@@ -16,7 +16,7 @@ Optional:
 - Mauszeiger (`.cur`) [installieren](#anleitung-zur-installation-einer-cur-datei)
 - `Amiga-Window.pb` in PureBasic laden und experimentieren
 
-## Was schon funktioniert
+## Features
 
 - Grösse im Quellcode einstellbar
 - Fenster über Klick schliessbar
@@ -25,10 +25,7 @@ Optional:
 - Farbe ändert wenn aktiv/inaktiv
 - ein paar Gadgets
 - Hinzufügen von Gadgets
-
-## Was noch nicht funktioniert
-
-- Grösse ändern
+- Amiga-Verhalten: Fenster nicht automatisch in den Vordergrund (ohne [ClickToFront](https://aminet.net/package/util/mouse/ClickToFront))
 
 ---
 
