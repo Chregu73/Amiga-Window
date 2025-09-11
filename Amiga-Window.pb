@@ -24,7 +24,7 @@ PreferenceGroup("Window")
 ;Window:
 Gadget(0)\Typ.i = #amigaWindow
 Gadget(0)\PosX.i = ReadPreferenceInteger("Position_X", 50)
-Gadget(0)\PosY.i = ReadPreferenceInteger("Position_X", 50)
+Gadget(0)\PosY.i = ReadPreferenceInteger("Position_Y", 50)
 Gadget(0)\Breite.i = 400
 Gadget(0)\Hoehe.i = 200
 Gadget(0)\Text.s = "Workbench:Test"
@@ -89,14 +89,10 @@ Enumeration
   #amiga_font
 EndEnumeration
 
-#fenster_breite = 400
 Global fenster_breite.i = Gadget(0)\Breite.i
-#fenster_hoehe = 200
 #text_hoehe = 12
-fenstertitel.s = "Workbench:Test"
 #aktiv = 1
 #inaktiv = 0
-amiga_fenster_aktiv.b = #aktiv
 beenden.b = #False
 
 
@@ -290,8 +286,6 @@ Procedure amigaWindow(Array Gadget.Gadgets(1))
   If OpenWindow(#amigaWindow, Gadget(0)\PosX.i, Gadget(0)\PosY.i,
                 Gadget(0)\Breite.i, Gadget(0)\Hoehe.i,
                 Gadget(0)\Text.s, #PB_Window_BorderLess)
-    ;Funktioniert noch nicht:
-  ;If OpenWindow(window.i, x.i, y.i, b.i, h.i, fenstertitel.s, flags.i & ~#PB_Window_BorderLess)
     SetWindowCallback(@WindowCallback())
     SetWindowColor(#amigaWindow, #amiga_farbe_gr)
     If LoadFont(#amiga_font, #font, #text_hoehe)
@@ -328,19 +322,17 @@ If amigaWindow(Gadget())
   DrawWindow(Gadget())
   Repeat
     EventID = WaitWindowEvent()
-    
     Select EventID
       Case #PB_Event_CloseWindow
         beenden.b = #True
       Case #PB_Event_LeftClick ; Ein Mausklick wurde registriert
-                               ; Holen Sie die Mauskoordinaten relativ zum Fenster
         Mouse_X = WindowMouseX(#amigaWindow) ;Hole die aktuellen Mauskoordinaten relativ zum Fenster
         Mouse_Y = WindowMouseY(#amigaWindow)
-        If IsInRectangle(Mouse_X, Mouse_Y, 20, 2, #fenster_breite-63, #text_hoehe+3) ;Titelleiste
+        If IsInRectangle(Mouse_X, Mouse_Y, 20, 2, Gadget(0)\Breite.i-63, #text_hoehe+3) ;Titelleiste
           SendMessage_(WindowID(#amigaWindow), #WM_SYSCOMMAND, #SC_SIZE_MOVE, 0)
-        ElseIf IsInRectangle(Mouse_X, Mouse_Y, #fenster_breite-42, 2, 19, #text_hoehe+3) ;Minimieren
+        ElseIf IsInRectangle(Mouse_X, Mouse_Y, Gadget(0)\Breite.i-42, 2, 19, #text_hoehe+3) ;Minimieren
           SetWindowState(#amigaWindow, #PB_Window_Minimize)
-        ElseIf IsInRectangle(Mouse_X, Mouse_Y, #fenster_breite-22, 2, 19, #text_hoehe+3) ;nach Vorne
+        ElseIf IsInRectangle(Mouse_X, Mouse_Y, Gadget(0)\Breite.i-22, 2, 19, #text_hoehe+3) ;nach Vorne
           SetWindowState(#amigaWindow, #PB_Window_Normal)
           SetActiveWindow(#amigaWindow)
         ElseIf IsInRectangle(Mouse_X, Mouse_Y, Gadget(4)\PosX, Gadget(4)\PosY.i,
@@ -363,6 +355,7 @@ If amigaWindow(Gadget())
           ;SetActiveWindow_(WindowID(#amigaWindow))
           ;SetActiveWindow(#amigaWindow)
           ;So geht es:
+          Gadget(0)\Flags.i = 0
           DrawWindow(Gadget())
         EndIf
       Case #PB_Event_ActivateWindow
@@ -395,8 +388,8 @@ EndIf
 
 
 ; IDE Options = PureBasic 6.21 (Windows - x64)
-; CursorPosition = 35
-; FirstLine = 16
+; CursorPosition = 26
+; FirstLine = 7
 ; Folding = --
 ; EnableXP
 ; UseIcon = boing32.ico
