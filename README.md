@@ -24,7 +24,7 @@ Optional:
 - Minimieren
 - Farbe ändert wenn aktiv/inaktiv
 - ein paar Gadgets
-- Hinzufügen von Gadgets
+- Hinzufügen von Gadgets in Struktur
 - Amiga-Verhalten: Fenster nicht automatisch in den Vordergrund (ohne [ClickToFront](https://aminet.net/package/util/mouse/ClickToFront))
 
 ---
